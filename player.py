@@ -5,6 +5,7 @@ from settings import *
 class Player(Camera):
     def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=-90):
         self.app = app
+        self.speed = 1
         super().__init__(position, pitch, yaw)
 
     def update(self):
@@ -21,7 +22,7 @@ class Player(Camera):
 
     def keyboard_control(self):
         key_state = pg.key.get_pressed()
-        vel = PLAYER_SPEED * self.app.delta_time
+        vel = PLAYER_SPEED * self.speed * self.app.delta_time
         if key_state[pg.K_w]:
             self.move_forward(vel)
         if key_state[pg.K_s]:
@@ -30,7 +31,11 @@ class Player(Camera):
             self.move_left(vel)
         if key_state[pg.K_d]:
             self.move_right(vel)
-        if key_state[pg.K_SPACE] or key_state[pg.K_e]:
+        if key_state[pg.K_e]:
             self.move_up(vel)
-        if key_state[pg.K_LSHIFT] or key_state[pg.K_q]:
+        if key_state[pg.K_q]:
             self.move_down(vel)
+        if key_state[pg.K_LSHIFT]:
+            self.speed = 5
+        else:
+            self.speed = 1
