@@ -2,6 +2,7 @@ import pygame as pg
 from camera import Camera
 from settings import *
 
+
 class Player(Camera):
     def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=-90):
         self.app = app

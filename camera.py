@@ -1,5 +1,6 @@
 from settings import *
 
+
 class Camera:
     def __init__(self, position, pitch=0, yaw=0):
         self.position = position
@@ -9,7 +10,7 @@ class Camera:
         self.up = glm.vec3(0, 1, 0)
         self.right = glm.vec3(1, 0, 0)
         self.forward = glm.vec3(0, 0, -1)
-        
+
         self.m_projection = glm.perspective(V_FOV, ASPECT_RATIO, NEAR, FAR)
         self.m_view = glm.mat4(1)
 
@@ -30,7 +31,7 @@ class Camera:
         self.forward = glm.normalize(self.forward)
         self.right = glm.normalize(glm.cross(self.forward, glm.vec3(0, 1, 0)))
         self.up = glm.normalize(glm.cross(self.right, self.forward))
-        
+
     def rotate_pitch(self, amount):
         self.pitch += amount
         self.pitch = glm.clamp(self.pitch, -PITCH_MAX, PITCH_MAX)
@@ -46,7 +47,7 @@ class Camera:
 
     def move_forward(self, amount):
         self.position += self.forward * amount
-    
+
     def move_backward(self, amount):
         self.position -= self.forward * amount
 
@@ -55,5 +56,3 @@ class Camera:
 
     def move_down(self, amount):
         self.position -= self.up * amount
-
-    
