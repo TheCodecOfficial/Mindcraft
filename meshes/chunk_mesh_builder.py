@@ -53,14 +53,14 @@ def build_face(face_dir, vertex_data, index, x, y, z, voxel_id):
         v1 = (x + 1, y + 1, z, voxel_id, face_dir)
         v2 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
         v3 = (x, y + 1, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
+        return add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
 
     if face_dir == 1:  # bottom face
-        v0 = (x, y, z + 1, voxel_id, face_dir)
-        v1 = (x + 1, y, z + 1, voxel_id, face_dir)
-        v2 = (x + 1, y, z, voxel_id, face_dir)
-        v3 = (x, y, z, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
+        v0 = (x, y, z, voxel_id, face_dir)
+        v1 = (x + 1, y, z, voxel_id, face_dir)
+        v2 = (x + 1, y, z + 1, voxel_id, face_dir)
+        v3 = (x, y, z + 1, voxel_id, face_dir)
+        return add_data(vertex_data, index, v0, v2, v3, v0, v1, v2)
 
     if face_dir == 2:  # right face
         v0 = (x + 1, y, z, voxel_id, face_dir)
@@ -70,22 +70,22 @@ def build_face(face_dir, vertex_data, index, x, y, z, voxel_id):
         return add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
 
     if face_dir == 3:  # left face
-        v0 = (x, y, z + 1, voxel_id, face_dir)
-        v1 = (x, y + 1, z + 1, voxel_id, face_dir)
-        v2 = (x, y + 1, z, voxel_id, face_dir)
-        v3 = (x, y, z, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
+        v0 = (x, y, z, voxel_id, face_dir)
+        v1 = (x, y + 1, z, voxel_id, face_dir)
+        v2 = (x, y + 1, z + 1, voxel_id, face_dir)
+        v3 = (x, y, z + 1, voxel_id, face_dir)
+        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
 
     if face_dir == 4:  # back face
         v0 = (x, y, z, voxel_id, face_dir)
         v1 = (x + 1, y, z, voxel_id, face_dir)
         v2 = (x + 1, y + 1, z, voxel_id, face_dir)
         v3 = (x, y + 1, z, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
+        return add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
 
     if face_dir == 5:  # front face
-        v0 = (x + 1, y, z + 1, voxel_id, face_dir)
-        v1 = (x, y, z + 1, voxel_id, face_dir)
-        v2 = (x, y + 1, z + 1, voxel_id, face_dir)
-        v3 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
+        v0 = (x, y, z + 1, voxel_id, face_dir)
+        v1 = (x, y + 1, z + 1, voxel_id, face_dir)
+        v2 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
+        v3 = (x + 1, y, z + 1, voxel_id, face_dir)
         return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
