@@ -1,6 +1,13 @@
 from settings import *
+from numba import uint8
 
 
+@njit
+def vertex_uint8(x, y, z, voxel_id, face_dir):
+    return uint8(x), uint8(y), uint8(z), uint8(voxel_id), uint8(face_dir)
+
+
+@njit
 def get_chunk_index(voxel_world_pos) -> int:
     wx, wy, wz = voxel_world_pos
     cx = wx // CHUNK_SIZE
@@ -11,6 +18,7 @@ def get_chunk_index(voxel_world_pos) -> int:
     return cx + cz * WORLD_WIDTH + cy * WORLD_AREA
 
 
+@njit
 def is_void(voxel_pos, voxel_world_pos, world_voxels) -> bool:
     chunk_index = get_chunk_index(voxel_world_pos)
     if chunk_index == -1:
@@ -18,14 +26,17 @@ def is_void(voxel_pos, voxel_world_pos, world_voxels) -> bool:
     chunk_voxels = world_voxels[chunk_index]
 
     x, y, z = voxel_pos
-    voxel_index = x % CHUNK_SIZE + z % CHUNK_SIZE * CHUNK_SIZE + y % CHUNK_SIZE * CHUNK_AREA
+    voxel_index = (
+        x % CHUNK_SIZE + z % CHUNK_SIZE * CHUNK_SIZE + y % CHUNK_SIZE * CHUNK_AREA
+    )
 
     if chunk_voxels[voxel_index]:
         return False
     return True
 
 
-def add_data(vertex_data, index, *vertices) -> int:
+@njit
+def add_data(vertex_data, index, *vertices):
     for vertex in vertices:
         for attr in vertex:
             vertex_data[index] = attr
@@ -33,10 +44,11 @@ def add_data(vertex_data, index, *vertices) -> int:
     return index
 
 
+@njit
 def build_chunk_mesh(
     chunk_voxels, format_size, chunk_position, world_voxels
 ) -> np.array:
-    vertex_data = np.empty(CHUNK_VOL * 18 * format_size * 2, dtype="uint8")
+    vertex_data = np.empty(CHUNK_VOL * 18 * format_size, dtype="uint8")
     index = 0
 
     for x in range(CHUNK_SIZE):
@@ -46,66 +58,51 @@ def build_chunk_mesh(
                 if not voxel_id:
                     continue
 
-                cx, cy, cz = glm.ivec3(chunk_position) * CHUNK_SIZE
-                wx = cx + x
-                wy = cy + y
-                wz = cz + z
+                ci, cj, ck = chunk_position
+                wx = x + ci * CHUNK_SIZE
+                wy = y + cj * CHUNK_SIZE
+                wz = z + ck * CHUNK_SIZE
 
                 if is_void((x, y + 1, z), (wx, wy + 1, wz), world_voxels):
-                    index = build_face(0, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x, y + 1, z, voxel_id, 0)
+                    v1 = vertex_uint8(x + 1, y + 1, z, voxel_id, 0)
+                    v2 = vertex_uint8(x + 1, y + 1, z + 1, voxel_id, 0)
+                    v3 = vertex_uint8(x, y + 1, z + 1, voxel_id, 0)
+                    index = add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
+
                 if is_void((x, y - 1, z), (wx, wy - 1, wz), world_voxels):
-                    index = build_face(1, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x, y, z, voxel_id, 1)
+                    v1 = vertex_uint8(x + 1, y, z, voxel_id, 1)
+                    v2 = vertex_uint8(x + 1, y, z + 1, voxel_id, 1)
+                    v3 = vertex_uint8(x, y, z + 1, voxel_id, 1)
+                    index = add_data(vertex_data, index, v0, v2, v3, v0, v1, v2)
+
                 if is_void((x + 1, y, z), (wx + 1, wy, wz), world_voxels):
-                    index = build_face(2, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x + 1, y, z, voxel_id, 2)
+                    v1 = vertex_uint8(x + 1, y + 1, z, voxel_id, 2)
+                    v2 = vertex_uint8(x + 1, y + 1, z + 1, voxel_id, 2)
+                    v3 = vertex_uint8(x + 1, y, z + 1, voxel_id, 2)
+                    index = add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
+
                 if is_void((x - 1, y, z), (wx - 1, wy, wz), world_voxels):
-                    index = build_face(3, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x, y, z, voxel_id, 3)
+                    v1 = vertex_uint8(x, y + 1, z, voxel_id, 3)
+                    v2 = vertex_uint8(x, y + 1, z + 1, voxel_id, 3)
+                    v3 = vertex_uint8(x, y, z + 1, voxel_id, 3)
+                    index = add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
+
                 if is_void((x, y, z - 1), (wx, wy, wz - 1), world_voxels):
-                    index = build_face(4, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x, y, z, voxel_id, 4)
+                    v1 = vertex_uint8(x + 1, y, z, voxel_id, 4)
+                    v2 = vertex_uint8(x + 1, y + 1, z, voxel_id, 4)
+                    v3 = vertex_uint8(x, y + 1, z, voxel_id, 4)
+                    index = add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
+
                 if is_void((x, y, z + 1), (wx, wy, wz + 1), world_voxels):
-                    index = build_face(5, vertex_data, index, x, y, z, voxel_id)
+                    v0 = vertex_uint8(x, y, z + 1, voxel_id, 5)
+                    v1 = vertex_uint8(x, y + 1, z + 1, voxel_id, 5)
+                    v2 = vertex_uint8(x + 1, y + 1, z + 1, voxel_id, 5)
+                    v3 = vertex_uint8(x + 1, y, z + 1, voxel_id, 5)
+                    index = add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
 
     return vertex_data[:index]
-
-
-def build_face(face_dir, vertex_data, index, x, y, z, voxel_id) -> int:
-    if face_dir == 0:  # top face
-        v0 = (x, y + 1, z, voxel_id, face_dir)
-        v1 = (x + 1, y + 1, z, voxel_id, face_dir)
-        v2 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
-        v3 = (x, y + 1, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
-
-    if face_dir == 1:  # bottom face
-        v0 = (x, y, z, voxel_id, face_dir)
-        v1 = (x + 1, y, z, voxel_id, face_dir)
-        v2 = (x + 1, y, z + 1, voxel_id, face_dir)
-        v3 = (x, y, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v3, v0, v1, v2)
-
-    if face_dir == 2:  # right face
-        v0 = (x + 1, y, z, voxel_id, face_dir)
-        v1 = (x + 1, y + 1, z, voxel_id, face_dir)
-        v2 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
-        v3 = (x + 1, y, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v1, v2, v0, v2, v3)
-
-    if face_dir == 3:  # left face
-        v0 = (x, y, z, voxel_id, face_dir)
-        v1 = (x, y + 1, z, voxel_id, face_dir)
-        v2 = (x, y + 1, z + 1, voxel_id, face_dir)
-        v3 = (x, y, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
-
-    if face_dir == 4:  # back face
-        v0 = (x, y, z, voxel_id, face_dir)
-        v1 = (x + 1, y, z, voxel_id, face_dir)
-        v2 = (x + 1, y + 1, z, voxel_id, face_dir)
-        v3 = (x, y + 1, z, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v3, v2, v0, v2, v1)
-
-    if face_dir == 5:  # front face
-        v0 = (x, y, z + 1, voxel_id, face_dir)
-        v1 = (x, y + 1, z + 1, voxel_id, face_dir)
-        v2 = (x + 1, y + 1, z + 1, voxel_id, face_dir)
-        v3 = (x + 1, y, z + 1, voxel_id, face_dir)
-        return add_data(vertex_data, index, v0, v2, v1, v0, v3, v2)
