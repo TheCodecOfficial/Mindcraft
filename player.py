@@ -37,6 +37,6 @@ class Player(Camera):
         if key_state[pg.K_q]:
             self.move_down(vel)
         if key_state[pg.K_LSHIFT]:
-            self.speed = 5
+            self.speed = PLAYER_SPRINT_MULTIPLIER
         else:
             self.speed = 1
