@@ -9,5 +9,6 @@ in vec2 uv;
 
 void main(){
     vec3 color = texture(u_texture_uv_debug, uv).rgb;
+    color = mix(voxel_color, color, 0.5);
     fragColor = vec4(color, 1);
 }

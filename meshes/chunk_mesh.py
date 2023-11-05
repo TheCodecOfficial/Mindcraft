@@ -17,5 +17,10 @@ class ChunkMesh(Mesh):
         self.vao = self.get_vao()
 
     def get_vertex_data(self) -> np.array:
-        mesh = build_chunk_mesh(self.chunk.voxels, self.format_size)
+        mesh = build_chunk_mesh(
+            self.chunk.voxels,
+            self.format_size,
+            self.chunk.position,
+            self.chunk.world.voxels, # TODO: This seems weird
+        )
         return mesh
