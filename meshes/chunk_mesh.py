@@ -11,9 +11,9 @@ class ChunkMesh(Mesh):
         self.ctx = self.app.ctx
         self.shader = self.app.shader_program.chunk
 
-        self.vbo_format = '3u1 1u1 1u1 1u1 1u1'
+        self.vbo_format = '1u4'
         self.format_size = sum(int(fmt[:1]) for fmt in self.vbo_format.split())
-        self.attrs = ('in_position', 'voxel_id', 'face_dir', 'ao', 'flip_id')
+        self.attrs = ('packed_vertex_data',)
         self.vao = self.get_vao()
 
     def get_vertex_data(self) -> np.array:

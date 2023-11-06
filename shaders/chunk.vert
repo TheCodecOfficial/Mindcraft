@@ -1,10 +1,11 @@
 #version 330 core
 
-layout (location = 0) in vec3 in_position;
-layout (location = 1) in int voxel_id;
-layout (location = 2) in int face_dir;
-layout (location = 3) in int ao;
-layout (location = 4) in int flip_id;
+layout (location = 0) in uint packed_vertex_data;
+int x, y, z;
+int voxel_id;
+int face_dir;
+int ao;
+int flip_id;
 
 uniform mat4 m_proj;
 uniform mat4 m_view;
@@ -42,7 +43,19 @@ vec3 hash31(float p){
     return fract((p3.xxy + p3.yzz) * p3.zyx);
 }
 
+void unpack_data(uint packed_data){
+    x = int((packed_data >> 26u) & 63u);
+    y = int((packed_data >> 20u) & 63u);
+    z = int((packed_data >> 14u) & 63u);
+    voxel_id = int((packed_data >> 6u) & 255u);
+    face_dir = int((packed_data >> 3u) & 7u);
+    ao = int((packed_data >> 1u) & 3u);
+    flip_id = int(packed_data & 1u);
+}
+
 void main(){
+    unpack_data(packed_vertex_data);
+    vec3 in_position = vec3(x, y, z);
     int uv_index = gl_VertexID % 6 + ((face_dir & 1) + flip_id * 2) * 6;
     uv = uv_coords[uv_indices[uv_index]];
     voxel_color = hash31(voxel_id);
