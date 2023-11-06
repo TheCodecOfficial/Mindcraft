@@ -98,12 +98,7 @@ class VoxelInteraction:
         while not (max_x > 1.0 and max_y > 1.0 and max_z > 1.0):
             result = self.get_voxel_id(voxel_world_pos=current_voxel_pos)
             if result[0]:
-                (
-                    self.voxel_id,
-                    self.voxel_index,
-                    self.voxel_local_pos,
-                    self.chunk,
-                ) = result
+                (self.voxel_id, self.voxel_index, self.voxel_local_pos, self.chunk,) = result
                 self.voxel_world_pos = current_voxel_pos
 
                 if step_dir == 0:

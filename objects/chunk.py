@@ -17,7 +17,7 @@ class Chunk:
         return m_model
 
     def set_uniforms(self):
-        self.app.shader_program.chunk["m_model"].write(self.m_model)
+        self.app.shader_program.chunk['m_model'].write(self.m_model)
 
     def build_mesh(self):
         self.mesh = ChunkMesh(self)
