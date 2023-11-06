@@ -36,7 +36,7 @@ class Chunk:
             for z in range(CHUNK_SIZE):
                 wx = cx + x
                 wz = cz + z
-                world_height = int(glm.simplex(glm.vec2(wx, wz) * 0.01) * 32 + 32)
+                world_height = int(glm.simplex(glm.vec2(wx, wz) * 0.005) * 32 + 32)
                 local_height = min(world_height - cy, CHUNK_SIZE)
 
                 for y in range(local_height):

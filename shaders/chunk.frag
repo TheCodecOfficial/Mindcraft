@@ -12,6 +12,7 @@ void main(){
     vec3 color = texture(u_texture_uv_debug, uv).rgb;
     //color = mix(vec3(1, 1, 1), color, 0.001);
     //color = mix(vec3(1, 1, 1), color, 0);
+    color = color * voxel_color;
     color = color * shading;
     fragColor = vec4(color, 1);
 }

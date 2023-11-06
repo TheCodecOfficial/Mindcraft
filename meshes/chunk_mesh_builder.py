@@ -40,10 +40,31 @@ def get_ao(local_pos, world_pos, world_voxels, plane):
     ao = (a + b + c), (g + h + a), (e + f + g), (c + d + e)
     return ao
 
+@njit
+def pack_vertex_data(x, y, z, voxel_id, face_dir, ao, flip_id):
+    packed = (
+        uint8(x) << 26
+        | uint8(y) << 20
+        | uint8(z) << 14
+        | uint8(voxel_id) << 6
+        | uint8(face_dir) << 3
+        | uint8(ao) << 1
+        | uint8(flip_id)
+    )
+    return packed
+
 
 @njit
 def vertex_uint8(x, y, z, voxel_id, face_dir, ao, flip_id):
-    return uint8(x), uint8(y), uint8(z), uint8(voxel_id), uint8(face_dir), uint8(ao), uint8(flip_id)
+    return (
+        uint8(x),
+        uint8(y),
+        uint8(z),
+        uint8(voxel_id),
+        uint8(face_dir),
+        uint8(ao),
+        uint8(flip_id),
+    )
 
 
 @njit

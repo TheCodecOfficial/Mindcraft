@@ -7,7 +7,7 @@ class Textures:
         self.app = app
         self.ctx = app.ctx
 
-        self.uv_debug = self.load_texture("stone")
+        self.uv_debug = self.load_texture("smoothstone")
 
         self.uv_debug.use(0)
 
