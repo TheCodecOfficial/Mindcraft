@@ -4,7 +4,7 @@ import glm
 import math
 
 # Resolution
-WINDOW_RES = glm.vec2(1900, 700)
+WINDOW_RES = glm.vec2(800, 600)
 
 # Raycasting
 MAX_RAY_DIST = 10

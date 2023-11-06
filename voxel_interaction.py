@@ -44,6 +44,7 @@ class VoxelInteraction:
 
     def rebuild_chunk(self, index):
         if index != -1:
+            print(f"rebuilding adjacent chunk {index}")
             self.chunks[index].mesh.rebuild_mesh()
 
     def rebuild_adjacent_chunks(self):
@@ -53,20 +54,24 @@ class VoxelInteraction:
         chunk_index = -1
         if lx == 0:
             chunk_index = get_chunk_index((wx - 1, wy, wz))
+            self.rebuild_chunk(chunk_index)
         elif lx == CHUNK_SIZE - 1:
             chunk_index = get_chunk_index((wx + 1, wy, wz))
+            self.rebuild_chunk(chunk_index)
 
         if ly == 0:
             chunk_index = get_chunk_index((wx, wy - 1, wz))
+            self.rebuild_chunk(chunk_index)
         elif ly == CHUNK_SIZE - 1:
             chunk_index = get_chunk_index((wx, wy + 1, wz))
+            self.rebuild_chunk(chunk_index)
 
         if lz == 0:
             chunk_index = get_chunk_index((wx, wy, wz - 1))
+            self.rebuild_chunk(chunk_index)
         elif lz == CHUNK_SIZE - 1:
             chunk_index = get_chunk_index((wx, wy, wz + 1))
-
-        self.rebuild_chunk(chunk_index)
+            self.rebuild_chunk(chunk_index)
 
     def switch_interaction_mode(self):
         self.interaction_mode = not self.interaction_mode
