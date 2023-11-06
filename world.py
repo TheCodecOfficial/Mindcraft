@@ -1,5 +1,7 @@
 from settings import *
 from objects.chunk import Chunk
+from voxel_interaction import VoxelInteraction
+import random
 
 
 class World:
@@ -9,6 +11,7 @@ class World:
         self.voxels = np.empty([WORLD_VOL, CHUNK_VOL], dtype=np.uint8)
         self.build_chunks()
         self.build_chunk_meshes()
+        self.voxel_interaction = VoxelInteraction(self)
 
     def build_chunks(self):
         for x in range(WORLD_WIDTH):
@@ -26,7 +29,7 @@ class World:
             chunk.build_mesh()
 
     def update(self):
-        pass
+        self.voxel_interaction.update()
 
     def render(self):
         for chunk in self.chunks:

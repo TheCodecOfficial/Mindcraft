@@ -41,7 +41,12 @@ class Chunk:
 
                 for y in range(local_height):
                     wy = cy + y
-                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = wy + 1
+                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = (
+                        1
+                        + self.position[0]
+                        + self.position[1] * WORLD_WIDTH
+                        + self.position[2] * WORLD_AREA
+                    )
         if np.any(voxels):
             self.is_empty = False
         return voxels

@@ -7,17 +7,17 @@ class Textures:
         self.app = app
         self.ctx = app.ctx
 
-        self.uv_debug = self.load_texture("smoothstone")
+        self.uv_debug = self.load_texture('gem')
 
         self.uv_debug.use(0)
 
     def load_texture(self, filename):
-        texture = pg.image.load(f"textures/{filename}.png")
+        texture = pg.image.load(f'textures/{filename}.png')
         texture = pg.transform.flip(texture, True, False)
         texture = self.ctx.texture(
             size=texture.get_size(),
             components=4,
-            data=pg.image.tostring(texture, "RGBA", False),
+            data=pg.image.tostring(texture, 'RGBA', False),
         )
         texture.anisotropy = 32
         texture.build_mipmaps()

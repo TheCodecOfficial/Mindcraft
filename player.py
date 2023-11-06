@@ -7,12 +7,22 @@ class Player(Camera):
     def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=-90):
         self.app = app
         self.speed = 1
+        self.voxel_interaction = None
         super().__init__(position, pitch, yaw)
 
     def update(self):
         self.mouse_control()
         self.keyboard_control()
         super().update()
+
+    def handle_events(self, event):
+        if not self.voxel_interaction:
+            self.voxel_interaction = self.app.scene.world.voxel_interaction
+        if event.type == pg.MOUSEBUTTONDOWN:
+            if event.button == 1:
+                self.voxel_interaction.set_voxel()
+            elif event.button == 3:
+                self.voxel_interaction.switch_interaction_mode()
 
     def mouse_control(self):
         mouse_dx, mouse_dy = pg.mouse.get_rel()

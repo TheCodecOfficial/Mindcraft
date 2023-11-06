@@ -6,6 +6,9 @@ import math
 # Resolution
 WINDOW_RES = glm.vec2(1900, 700)
 
+# Raycasting
+MAX_RAY_DIST = 10
+
 # Chunks
 CHUNK_SIZE = 32
 HALF_CHUNK_SIZE = CHUNK_SIZE // 2

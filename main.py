@@ -7,6 +7,7 @@ from scene import Scene
 from player import Player
 from textures import Textures
 
+
 class Engine:
     def __init__(self):
         pg.init()
@@ -59,6 +60,7 @@ class Engine:
                 event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE
             ):
                 self.is_running = False
+            self.player.handle_events(event)
 
     def run(self):
         while self.is_running:

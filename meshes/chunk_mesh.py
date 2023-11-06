@@ -11,9 +11,12 @@ class ChunkMesh(Mesh):
         self.ctx = self.app.ctx
         self.shader = self.app.shader_program.chunk
 
-        self.vbo_format = '1u4'
+        self.vbo_format = "1u4"
         self.format_size = sum(int(fmt[:1]) for fmt in self.vbo_format.split())
-        self.attrs = ('packed_vertex_data',)
+        self.attrs = ("packed_vertex_data",)
+        self.vao = self.get_vao()
+
+    def rebuild_mesh(self):
         self.vao = self.get_vao()
 
     def get_vertex_data(self) -> np.array:
@@ -21,6 +24,6 @@ class ChunkMesh(Mesh):
             self.chunk.voxels,
             self.format_size,
             self.chunk.position,
-            self.chunk.world.voxels, # TODO: This seems weird
+            self.chunk.world.voxels,  # TODO: This seems weird
         )
         return mesh
