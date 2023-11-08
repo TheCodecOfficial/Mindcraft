@@ -24,7 +24,7 @@ class VoxelInteraction:
             voxel_id = self.get_voxel_id(self.voxel_world_pos + self.voxel_normal)
             voxel_id, voxel_index, _, chunk = voxel_id
             if not voxel_id:
-                chunk.voxels[voxel_index] = random.randint(1, 255)
+                chunk.voxels[voxel_index] = self.new_voxel_id
                 self.chunk.mesh.rebuild_mesh()
 
                 chunk.is_empty = False
@@ -44,7 +44,7 @@ class VoxelInteraction:
 
     def rebuild_chunk(self, index):
         if index != -1:
-            print(f"rebuilding adjacent chunk {index}")
+            print(f'rebuilding adjacent chunk {index}')
             self.chunks[index].mesh.rebuild_mesh()
 
     def rebuild_adjacent_chunks(self):

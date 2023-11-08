@@ -14,9 +14,12 @@ class World:
         self.voxel_interaction = VoxelInteraction(self)
 
     def build_chunks(self):
+        i = 0
         for x in range(WORLD_WIDTH):
             for z in range(WORLD_DEPTH):
                 for y in range(WORLD_HEIGHT):
+                    i += 1
+                    print(f'Building chunk {i}/{WORLD_VOL}')
                     chunk = Chunk(self, (x, y, z))
                     chunk_index = x + z * WORLD_WIDTH + y * WORLD_AREA
                     self.chunks[chunk_index] = chunk

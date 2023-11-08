@@ -9,7 +9,7 @@ class ChunkMesh(Mesh):
         self.app = chunk.app
         self.chunk = chunk
         self.ctx = self.app.ctx
-        self.shader = self.app.shader_program.chunk
+        self.shader = self.app.shader_program.chunk_shader
 
         self.vbo_format = '1u4'
         self.format_size = sum(int(fmt[:1]) for fmt in self.vbo_format.split())

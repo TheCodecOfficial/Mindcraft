@@ -1,6 +1,6 @@
 from settings import *
 from meshes.chunk_mesh import ChunkMesh
-
+from terrain_generation import *
 
 class Chunk:
     def __init__(self, world, position):
@@ -12,18 +12,21 @@ class Chunk:
         self.mesh: ChunkMesh = None
         self.is_empty = True
 
+        self.center = (glm.vec3(self.position) + 0.5) * CHUNK_SIZE
+        self.is_inside_frustum = self.app.player.frustum.is_inside_frustum
+
     def get_model_matrix(self):
         m_model = glm.translate(glm.mat4(), glm.vec3(self.position) * CHUNK_SIZE)
         return m_model
 
     def set_uniforms(self):
-        self.app.shader_program.chunk['m_model'].write(self.m_model)
+        self.app.shader_program.chunk_shader['m_model'].write(self.m_model)
 
     def build_mesh(self):
         self.mesh = ChunkMesh(self)
 
     def render(self):
-        if not self.is_empty:
+        if not self.is_empty and self.is_inside_frustum(self):
             self.set_uniforms()
             self.mesh.render()
 
@@ -31,22 +34,22 @@ class Chunk:
         voxels = np.zeros(CHUNK_VOL, dtype=np.uint8)
 
         cx, cy, cz = glm.ivec3(self.position) * CHUNK_SIZE
-
+        self.generate_terrain(voxels, cx, cy, cz)
+        
+        if np.any(voxels):
+            self.is_empty = False
+        return voxels
+    
+    @staticmethod
+    @njit
+    def generate_terrain(voxels, cx, cy, cz):
         for x in range(CHUNK_SIZE):
             for z in range(CHUNK_SIZE):
                 wx = cx + x
                 wz = cz + z
-                world_height = int(glm.simplex(glm.vec2(wx, wz) * 0.005) * 32 + 32)
+                world_height = get_height(wx, wz)
                 local_height = min(world_height - cy, CHUNK_SIZE)
 
                 for y in range(local_height):
                     wy = cy + y
-                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = (
-                        1
-                        + self.position[0]
-                        + self.position[1] * WORLD_WIDTH
-                        + self.position[2] * WORLD_AREA
-                    )
-        if np.any(voxels):
-            self.is_empty = False
-        return voxels
+                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = 1

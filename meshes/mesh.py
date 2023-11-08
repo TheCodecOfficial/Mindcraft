@@ -28,4 +28,5 @@ class Mesh:
         return vao
 
     def render(self):
-        self.vao.render()
+        if self.vao:
+            self.vao.render()

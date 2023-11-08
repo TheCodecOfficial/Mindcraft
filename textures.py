@@ -8,17 +8,28 @@ class Textures:
         self.ctx = app.ctx
 
         self.uv_debug = self.load_texture('gem')
+        self.texture_array = self.load_texture('tex_array', True)
 
         self.uv_debug.use(0)
+        self.texture_array.use(1)
 
-    def load_texture(self, filename):
+    def load_texture(self, filename, is_texture_array=False):
         texture = pg.image.load(f'textures/{filename}.png')
         texture = pg.transform.flip(texture, True, False)
-        texture = self.ctx.texture(
-            size=texture.get_size(),
-            components=4,
-            data=pg.image.tostring(texture, 'RGBA', False),
-        )
+
+        if is_texture_array:
+            num_layers = 3 * texture.get_height() // texture.get_width()
+            texture = self.app.ctx.texture_array(
+                size=(texture.get_width(), texture.get_height() // num_layers, num_layers,),
+                components=4,
+                data=pg.image.tostring(texture, 'RGBA'),
+            )
+        else:
+            texture = self.ctx.texture(
+                size=texture.get_size(),
+                components=4,
+                data=pg.image.tostring(texture, 'RGBA', False),
+            )
         texture.anisotropy = 32
         texture.build_mipmaps()
         texture.filter = (mgl.NEAREST, mgl.NEAREST)
