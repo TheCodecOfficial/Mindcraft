@@ -2,23 +2,17 @@ import pygame as pg
 from camera import Camera
 from settings import *
 
-class Player(Camera):
+
+class PlayerOld(Camera):
     def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=-90):
         self.app = app
-        self.grounded = True
         self.speed = 1
         self.voxel_interaction = None
-        self.world_util = None
         super().__init__(position, pitch, yaw)
 
     def update(self):
         self.mouse_control()
         self.keyboard_control()
-
-        pos = self.position
-        height = self.world_util.get_height(*pos)
-        print(f'player pos: {pos}, height {height}')
-
         super().update()
 
     def handle_events(self, event):

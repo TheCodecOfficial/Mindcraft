@@ -6,6 +6,7 @@ from shader_program import ShaderProgram
 from scene import Scene
 from player import Player
 from textures import Textures
+from world_util import WorldUtil
 
 
 class Engine:
@@ -37,6 +38,8 @@ class Engine:
         self.player = Player(self)
         self.shader_program = ShaderProgram(self)
         self.scene = Scene(self)
+        self.world_util = WorldUtil(self)
+        self.player.world_util = self.world_util
 
     def update(self):
         self.player.update()

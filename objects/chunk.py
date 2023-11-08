@@ -52,4 +52,4 @@ class Chunk:
 
                 for y in range(local_height):
                     wy = cy + y
-                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = 1
+                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = 4
