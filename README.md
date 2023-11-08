@@ -9,4 +9,4 @@ The engine closely follows this [tutorial](https://www.youtube.com/watch?v=Ab8TO
 #### Installation
 
 1. `pip install pygame moderngl PyGLM numba opensimplex`
-2. Run `main.p`
+2. Run `main.py`
