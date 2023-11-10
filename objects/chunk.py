@@ -53,7 +53,7 @@ class Chunk:
                 #world_height = 32 + x
                 #local_height = min(world_height - cy, CHUNK_SIZE)
 
-                aniso = fractal_noise2_norm(10+wx * 0.01, wz * 0.01, octaves=3)
+                aniso = fractal_noise2_norm(10+wx * 0.01+3, wz * 0.01+3, octaves=4)
                 b = 1 if aniso > 0.5 else 2
                 aniso -= 0.3
                 aniso *= 2
@@ -65,8 +65,8 @@ class Chunk:
                 for y in range(CHUNK_SIZE):
                     wy = cy + y
                     y_norm = 2*(wy / (CHUNK_SIZE * WORLD_HEIGHT) - 0.5)
-                    density = noise_3D(wx * 0.02, wy * 0.02, wz * 0.02) - 2*y_norm
-                    density_aniso = noise_3D(wx * 0.02, wy * 0.02, wz * 0.1) - 20*y_norm
+                    density = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.02+3, octaves=2) - 2*y_norm
+                    density_aniso = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.1+3, octaves=2) - 3*y_norm
                     density = aniso*density_aniso + (1-aniso)*density
                     b = 0 if density < 0 else b
                     voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = b

@@ -26,8 +26,8 @@ class Player:
 
     def physics_update(self):
         self.ground_check()
-        drag = 0.8 if self.grounded else 10
-        drag = 1 - 0.5**(drag * self.app.delta_time * 200)
+        drag = 0.8 if self.grounded else 0.8
+        drag = 1 - 0.5 ** (drag * self.app.delta_time * 200)
         if not self.grounded:
             self.velocity.y -= GRAVITY * self.app.delta_time
         elif self.velocity.y < 0:
@@ -48,6 +48,16 @@ class Player:
         self.position += self.velocity * self.app.delta_time
         self.camera.position = self.position
 
+        hypergrounded = self.world_util.is_occupied(
+            self.position.x,
+            self.position.y - PLAYER_HEIGHT - 0.5,
+            self.position.z,
+        )
+        if hypergrounded:
+            self.position.y += 0.005
+
+        print(f"Player Y position: {self.position.y}")
+
         self.acceleration = glm.vec3(0, 0, 0)
         self.velocity.x *= drag
         self.velocity.z *= drag
@@ -55,45 +65,47 @@ class Player:
         # print(f"Velocity: {glm.length(self.velocity)}")
 
     def handle_collisions(self):
+        collision_radius = PLAYER_HITBOX_RADIUS * 2
+        height_epsilon = 0.7
         voxel_px_0 = self.world_util.is_occupied(
-            self.position.x + PLAYER_HITBOX_RADIUS,
-            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.x + collision_radius,
+            self.position.y - PLAYER_HEIGHT + 1 - height_epsilon,
             self.position.z,
         )
         voxel_px_1 = self.world_util.is_occupied(
-            self.position.x + PLAYER_HITBOX_RADIUS,
-            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.x + collision_radius,
+            self.position.y - PLAYER_HEIGHT + 2 - height_epsilon,
             self.position.z,
         )
         voxel_nx_0 = self.world_util.is_occupied(
-            self.position.x - PLAYER_HITBOX_RADIUS,
-            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.x - collision_radius,
+            self.position.y - PLAYER_HEIGHT + 1 - height_epsilon,
             self.position.z,
         )
         voxel_nx_1 = self.world_util.is_occupied(
-            self.position.x - PLAYER_HITBOX_RADIUS,
-            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.x - collision_radius,
+            self.position.y - PLAYER_HEIGHT + 2 - height_epsilon,
             self.position.z,
         )
         voxel_pz_0 = self.world_util.is_occupied(
             self.position.x,
-            self.position.y - PLAYER_HEIGHT + 1,
-            self.position.z + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 1 - height_epsilon,
+            self.position.z + collision_radius,
         )
         voxel_pz_1 = self.world_util.is_occupied(
             self.position.x,
-            self.position.y - PLAYER_HEIGHT + 2,
-            self.position.z + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 2 - height_epsilon,
+            self.position.z + collision_radius,
         )
         voxel_nz_0 = self.world_util.is_occupied(
             self.position.x,
-            self.position.y - PLAYER_HEIGHT + 1,
-            self.position.z - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 1 - height_epsilon,
+            self.position.z - collision_radius,
         )
         voxel_nz_1 = self.world_util.is_occupied(
             self.position.x,
-            self.position.y - PLAYER_HEIGHT + 2,
-            self.position.z - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 2 - height_epsilon,
+            self.position.z - collision_radius,
         )
 
         if (voxel_px_0 or voxel_px_1) and self.velocity.x > 0:
@@ -131,7 +143,7 @@ class Player:
         )
 
     def move(self, direction):
-        air_multiplier = 0.25 if not self.grounded else 1
+        air_multiplier = 0.75 if not self.grounded else 1
         # air_multiplier = 1
         forward = glm.vec3(glm.cos(self.camera.yaw), 0, glm.sin(self.camera.yaw))
         speed = 100 * air_multiplier
@@ -148,7 +160,7 @@ class Player:
 
     def jump(self):
         if self.grounded:
-            self.velocity.y = 7
+            self.velocity.y = JUMP_STRENGTH
 
     def handle_events(self, event):
         if not self.voxel_interaction:

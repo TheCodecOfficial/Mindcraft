@@ -17,5 +17,5 @@ out vec2 uv;
 void main() {
     uv = in_tex_coord_0;
     marker_color = marker_colors[mode_id];
-    gl_Position = m_proj * m_view * m_model * vec4((in_position - 0.5) * 1.01 + 0.5, 1.0);
+    gl_Position = m_proj * m_view * m_model * vec4((in_position - 0.5) * 0.99 + 0.5, 1.0);
 }

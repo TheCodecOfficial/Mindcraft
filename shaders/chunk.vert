@@ -59,7 +59,7 @@ void main(){
     vec3 in_position = vec3(x, y, z);
     int uv_index = gl_VertexID % 6 + ((face_dir & 1) + flip_id * 2) * 6;
     uv = uv_coords[uv_indices[uv_index]];
-    voxel_color = hash31(voxel_id);
+    voxel_color = hash31(x);
     shading = face_shading[face_dir] * ao_values[ao];
     gl_Position = m_proj * m_view * m_model * vec4(in_position, 1.0);
 }
