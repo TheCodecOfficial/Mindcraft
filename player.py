@@ -2,24 +2,153 @@ import pygame as pg
 from camera import Camera
 from settings import *
 
-class Player(Camera):
-    def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=-90):
+
+class Player:
+    def __init__(self, app, position=PLAYER_POS, pitch=0, yaw=0):
         self.app = app
-        self.grounded = True
-        self.speed = 1
-        self.voxel_interaction = None
         self.world_util = None
-        super().__init__(position, pitch, yaw)
+        self.voxel_interaction = None
+        self.camera = Camera(position, pitch, yaw)
+
+        self.speed = 1
+        self.grounded = True
+        self.position = position
+        self.velocity = glm.vec3(0, 0, 0)
+        self.acceleration = glm.vec3(0, 0, 0)
+        self.max_speed = PLAYER_SPEED
 
     def update(self):
         self.mouse_control()
         self.keyboard_control()
+        self.physics_update()
 
-        pos = self.position
-        height = self.world_util.get_height(*pos)
-        print(f'player pos: {pos}, height {height}')
+        self.camera.update()
 
-        super().update()
+    def physics_update(self):
+        self.ground_check()
+        drag = 0.8 if self.grounded else 10
+        drag = 1 - 0.5**(drag * self.app.delta_time * 200)
+        if not self.grounded:
+            self.velocity.y -= GRAVITY * self.app.delta_time
+        elif self.velocity.y < 0:
+            self.velocity.y = 0
+
+        self.velocity += self.acceleration * self.app.delta_time
+
+        magnitude = glm.length(glm.vec2(self.velocity.x, self.velocity.z))
+        if drag != 0:
+            adjusted_speed = self.max_speed / drag
+        else:
+            adjusted_speed = self.max_speed
+        if magnitude > adjusted_speed:
+            self.velocity.x = self.velocity.x / magnitude * adjusted_speed
+            self.velocity.z = self.velocity.z / magnitude * adjusted_speed
+        self.handle_collisions()
+
+        self.position += self.velocity * self.app.delta_time
+        self.camera.position = self.position
+
+        self.acceleration = glm.vec3(0, 0, 0)
+        self.velocity.x *= drag
+        self.velocity.z *= drag
+
+        # print(f"Velocity: {glm.length(self.velocity)}")
+
+    def handle_collisions(self):
+        voxel_px_0 = self.world_util.is_occupied(
+            self.position.x + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.z,
+        )
+        voxel_px_1 = self.world_util.is_occupied(
+            self.position.x + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.z,
+        )
+        voxel_nx_0 = self.world_util.is_occupied(
+            self.position.x - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.z,
+        )
+        voxel_nx_1 = self.world_util.is_occupied(
+            self.position.x - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.z,
+        )
+        voxel_pz_0 = self.world_util.is_occupied(
+            self.position.x,
+            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.z + PLAYER_HITBOX_RADIUS,
+        )
+        voxel_pz_1 = self.world_util.is_occupied(
+            self.position.x,
+            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.z + PLAYER_HITBOX_RADIUS,
+        )
+        voxel_nz_0 = self.world_util.is_occupied(
+            self.position.x,
+            self.position.y - PLAYER_HEIGHT + 1,
+            self.position.z - PLAYER_HITBOX_RADIUS,
+        )
+        voxel_nz_1 = self.world_util.is_occupied(
+            self.position.x,
+            self.position.y - PLAYER_HEIGHT + 2,
+            self.position.z - PLAYER_HITBOX_RADIUS,
+        )
+
+        if (voxel_px_0 or voxel_px_1) and self.velocity.x > 0:
+            self.velocity.x = 0
+        if (voxel_nx_0 or voxel_nx_1) and self.velocity.x < 0:
+            self.velocity.x = 0
+        if (voxel_pz_0 or voxel_pz_1) and self.velocity.z > 0:
+            self.velocity.z = 0
+        if (voxel_nz_0 or voxel_nz_1) and self.velocity.z < 0:
+            self.velocity.z = 0
+
+    def ground_check(self):
+        bottom_voxel_0 = self.world_util.is_occupied(
+            self.position.x - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT,
+            self.position.z - PLAYER_HITBOX_RADIUS,
+        )
+        bottom_voxel_1 = self.world_util.is_occupied(
+            self.position.x + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT,
+            self.position.z - PLAYER_HITBOX_RADIUS,
+        )
+        bottom_voxel_2 = self.world_util.is_occupied(
+            self.position.x + PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT,
+            self.position.z + PLAYER_HITBOX_RADIUS,
+        )
+        bottom_voxel_3 = self.world_util.is_occupied(
+            self.position.x - PLAYER_HITBOX_RADIUS,
+            self.position.y - PLAYER_HEIGHT,
+            self.position.z + PLAYER_HITBOX_RADIUS,
+        )
+        self.grounded = (
+            bottom_voxel_0 or bottom_voxel_1 or bottom_voxel_2 or bottom_voxel_3
+        )
+
+    def move(self, direction):
+        air_multiplier = 0.25 if not self.grounded else 1
+        # air_multiplier = 1
+        forward = glm.vec3(glm.cos(self.camera.yaw), 0, glm.sin(self.camera.yaw))
+        speed = 100 * air_multiplier
+        if direction == "forward":
+            self.acceleration += forward * speed
+        elif direction == "backward":
+            self.acceleration += -forward * speed
+        elif direction == "left":
+            left = glm.vec3(forward.z, 0, -forward.x)
+            self.acceleration += left * speed
+        elif direction == "right":
+            left = glm.vec3(forward.z, 0, -forward.x)
+            self.acceleration += -left * speed
+
+    def jump(self):
+        if self.grounded:
+            self.velocity.y = 7
 
     def handle_events(self, event):
         if not self.voxel_interaction:
@@ -33,26 +162,23 @@ class Player(Camera):
     def mouse_control(self):
         mouse_dx, mouse_dy = pg.mouse.get_rel()
         if mouse_dx:
-            self.rotate_yaw(-mouse_dx * MOUSE_SENSITIVITY)
+            self.camera.rotate_yaw(-mouse_dx * MOUSE_SENSITIVITY)
         if mouse_dy:
-            self.rotate_pitch(-mouse_dy * MOUSE_SENSITIVITY)
+            self.camera.rotate_pitch(-mouse_dy * MOUSE_SENSITIVITY)
 
     def keyboard_control(self):
         key_state = pg.key.get_pressed()
-        vel = PLAYER_SPEED * self.speed * self.app.delta_time
         if key_state[pg.K_w]:
-            self.move_forward(vel)
-        if key_state[pg.K_s]:
-            self.move_backward(vel)
+            self.move("forward")
         if key_state[pg.K_a]:
-            self.move_left(vel)
+            self.move("left")
+        if key_state[pg.K_s]:
+            self.move("backward")
         if key_state[pg.K_d]:
-            self.move_right(vel)
-        if key_state[pg.K_e]:
-            self.move_up(vel)
-        if key_state[pg.K_q]:
-            self.move_down(vel)
+            self.move("right")
+        if key_state[pg.K_SPACE]:
+            self.jump()
         if key_state[pg.K_LSHIFT]:
-            self.speed = PLAYER_SPRINT_MULTIPLIER
+            self.max_speed = PLAYER_SPEED * PLAYER_SPRINT_MULTIPLIER
         else:
-            self.speed = 1
+            self.max_speed = PLAYER_SPEED

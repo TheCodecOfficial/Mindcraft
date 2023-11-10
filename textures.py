@@ -7,10 +7,10 @@ class Textures:
         self.app = app
         self.ctx = app.ctx
 
-        self.uv_debug = self.load_texture('gem')
+        self.marker = self.load_texture('marker')
         self.texture_array = self.load_texture('tex_array', True)
 
-        self.uv_debug.use(0)
+        self.marker.use(0)
         self.texture_array.use(1)
 
     def load_texture(self, filename, is_texture_array=False):

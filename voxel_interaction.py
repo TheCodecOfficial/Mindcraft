@@ -44,32 +44,77 @@ class VoxelInteraction:
 
     def rebuild_chunk(self, index):
         if index != -1:
-            print(f'rebuilding adjacent chunk {index}')
+            #print(f"rebuilding adjacent chunk {index}")
             self.chunks[index].mesh.rebuild_mesh()
 
     def rebuild_adjacent_chunks(self):
         lx, ly, lz = self.voxel_local_pos
         wx, wy, wz = self.voxel_world_pos
 
+        #print("##############")
+
+        lxu = lx == 0
+        lxo = lx == CHUNK_SIZE - 1
+        lyu = ly == 0
+        lyo = ly == CHUNK_SIZE - 1
+        lzu = lz == 0
+        lzo = lz == CHUNK_SIZE - 1
+
         chunk_index = -1
-        if lx == 0:
+        if lxu:
             chunk_index = get_chunk_index((wx - 1, wy, wz))
             self.rebuild_chunk(chunk_index)
-        elif lx == CHUNK_SIZE - 1:
+            if lyu:
+                chunk_index = get_chunk_index((wx - 1, wy - 1, wz))
+                self.rebuild_chunk(chunk_index)
+            elif lyo:
+                chunk_index = get_chunk_index((wx - 1, wy + 1, wz))
+                self.rebuild_chunk(chunk_index)
+            if lzu:
+                chunk_index = get_chunk_index((wx - 1, wy, wz - 1))
+                self.rebuild_chunk(chunk_index)
+            elif lzo:
+                chunk_index = get_chunk_index((wx - 1, wy, wz + 1))
+                self.rebuild_chunk(chunk_index)
+        elif lxo:
             chunk_index = get_chunk_index((wx + 1, wy, wz))
             self.rebuild_chunk(chunk_index)
+            if lyu:
+                chunk_index = get_chunk_index((wx + 1, wy - 1, wz))
+                self.rebuild_chunk(chunk_index)
+            elif lyo:
+                chunk_index = get_chunk_index((wx + 1, wy + 1, wz))
+                self.rebuild_chunk(chunk_index)
+            if lzu:
+                chunk_index = get_chunk_index((wx + 1, wy, wz - 1))
+                self.rebuild_chunk(chunk_index)
+            elif lzo:
+                chunk_index = get_chunk_index((wx + 1, wy, wz + 1))
+                self.rebuild_chunk(chunk_index)
 
-        if ly == 0:
+        if lyu:
             chunk_index = get_chunk_index((wx, wy - 1, wz))
             self.rebuild_chunk(chunk_index)
-        elif ly == CHUNK_SIZE - 1:
+            if lzu:
+                chunk_index = get_chunk_index((wx, wy - 1, wz - 1))
+                self.rebuild_chunk(chunk_index)
+            elif lzo:
+                chunk_index = get_chunk_index((wx, wy - 1, wz + 1))
+                self.rebuild_chunk(chunk_index)
+        elif lyo:
             chunk_index = get_chunk_index((wx, wy + 1, wz))
             self.rebuild_chunk(chunk_index)
+            if lzu:
+                chunk_index = get_chunk_index((wx, wy + 1, wz - 1))
+                self.rebuild_chunk(chunk_index)
+            elif lzo:
+                chunk_index = get_chunk_index((wx, wy + 1, wz + 1))
+                self.rebuild_chunk(chunk_index)
 
-        if lz == 0:
+        if lzu:
             chunk_index = get_chunk_index((wx, wy, wz - 1))
             self.rebuild_chunk(chunk_index)
-        elif lz == CHUNK_SIZE - 1:
+        elif lzo:
             chunk_index = get_chunk_index((wx, wy, wz + 1))
             self.rebuild_chunk(chunk_index)
 
@@ -80,8 +125,8 @@ class VoxelInteraction:
         self.raycast()
 
     def raycast(self):
-        x1, y1, z1 = self.app.player.position
-        x2, y2, z2 = self.app.player.position + self.app.player.forward * MAX_RAY_DIST
+        x1, y1, z1 = self.app.player.camera.position
+        x2, y2, z2 = self.app.player.camera.position + self.app.player.camera.forward * MAX_RAY_DIST
 
         current_voxel_pos = glm.ivec3(x1, y1, z1)
         self.voxel_id = 0
@@ -103,7 +148,12 @@ class VoxelInteraction:
         while not (max_x > 1.0 and max_y > 1.0 and max_z > 1.0):
             result = self.get_voxel_id(voxel_world_pos=current_voxel_pos)
             if result[0]:
-                (self.voxel_id, self.voxel_index, self.voxel_local_pos, self.chunk,) = result
+                (
+                    self.voxel_id,
+                    self.voxel_index,
+                    self.voxel_local_pos,
+                    self.chunk,
+                ) = result
                 self.voxel_world_pos = current_voxel_pos
 
                 if step_dir == 0:

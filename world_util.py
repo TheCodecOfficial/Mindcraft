@@ -38,6 +38,13 @@ class WorldUtil:
                 voxel_id = chunk.voxels[voxel_index]
                 return voxel_id
         return -1
+
+    def is_void(self, x, y, z):
+        voxel_id = self.get_voxel_id(x, y, z)
+        return voxel_id == 0 or voxel_id == -1
+    
+    def is_occupied(self, x, y, z):
+        return not self.is_void(x, y, z)
     
     def get_height(self, x, y, z):
         height = 0

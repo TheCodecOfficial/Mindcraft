@@ -7,7 +7,8 @@ from scene import Scene
 from player import Player
 from textures import Textures
 from world_util import WorldUtil
-
+import ctypes
+ctypes.windll.user32.SetProcessDPIAware()
 
 class Engine:
     def __init__(self):
@@ -46,9 +47,15 @@ class Engine:
         self.shader_program.update()
         self.scene.update()
 
-        self.delta_time = self.clock.tick()
+        #self.delta_time = self.clock.tick() * 0.001
+        self.clock.tick(60)
+        fps = self.clock.get_fps()
+        if fps > 0:
+            self.delta_time = 1.0/self.clock.get_fps()
+        else:
+            self.delta_time = 0
         self.time = pg.time.get_ticks() * 0.001
-        pg.display.set_caption(f'FPS: {self.clock.get_fps() :.0f}')
+        pg.display.set_caption(f'FPS: {fps :.0f}')
 
     def render(self):
         self.ctx.clear(color=BG_COLOR)
