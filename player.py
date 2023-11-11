@@ -48,13 +48,13 @@ class Player:
         self.position += self.velocity * self.app.delta_time
         self.camera.position = self.position
 
-        hypergrounded = self.world_util.is_occupied(
+        """hypergrounded = self.world_util.is_occupied(
             self.position.x,
             self.position.y - PLAYER_HEIGHT - 0.5,
             self.position.z,
         )
         if hypergrounded:
-            self.position.y += 0.005
+            self.position.y += 0.005"""
 
         print(f"Player Y position: {self.position.y}")
 
