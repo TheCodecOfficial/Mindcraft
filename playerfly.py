@@ -10,10 +10,19 @@ class PlayerFly():
         self.voxel_interaction = None
         self.camera = Camera(position, pitch, yaw)
 
+        self.chunk_pos = glm.ivec3(0)
+        self.functions_to_call = []
+
     def update(self):
         self.mouse_control()
         self.keyboard_control()
         self.camera.update()
+
+        newpos = glm.ivec3(self.camera.position) // CHUNK_SIZE
+        if newpos != self.chunk_pos:
+            self.chunk_pos = newpos
+            for f in self.functions_to_call:
+                f()
 
     def handle_events(self, event):
         return

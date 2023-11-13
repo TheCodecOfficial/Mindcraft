@@ -25,9 +25,12 @@ class Engine:
         self.ctx.enable(flags=mgl.DEPTH_TEST | mgl.CULL_FACE | mgl.BLEND)
         self.ctx.gc_mode = 'auto'
 
+        #self.fbo = self.ctx.framebuffer()
+
         self.clock = pg.time.Clock()
         self.delta_time = 0
         self.time = 0
+        self.slow_time = 0
 
         pg.event.set_grab(True)
         pg.mouse.set_visible(False)
@@ -49,17 +52,25 @@ class Engine:
         self.scene.update()
 
         #self.delta_time = self.clock.tick() * 0.001
-        self.clock.tick(60)
+        self.clock.tick(240)
         fps = self.clock.get_fps()
         if fps > 0:
             self.delta_time = 1.0/self.clock.get_fps()
         else:
             self.delta_time = 0
         self.time = pg.time.get_ticks() * 0.001
+        self.slow_time += self.delta_time
+        if self.slow_time > 1:
+            self.slow_time -= 1
+            self.slow_tick()
         pg.display.set_caption(f'FPS: {fps :.0f}')
+
+    def slow_tick(self):
+        self.scene.world.cleanup_chunks()
 
     def render(self):
         self.ctx.clear(color=BG_COLOR)
+
         self.scene.render()
         pg.display.flip()
 
