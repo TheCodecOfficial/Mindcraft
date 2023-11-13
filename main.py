@@ -5,6 +5,7 @@ import sys
 from shader_program import ShaderProgram
 from scene import Scene
 from player import Player
+from playerfly import PlayerFly
 from textures import Textures
 from world_util import WorldUtil
 import ctypes
@@ -36,7 +37,7 @@ class Engine:
 
     def on_init(self):
         self.textures = Textures(self)
-        self.player = Player(self)
+        self.player = PlayerFly(self)
         self.shader_program = ShaderProgram(self)
         self.scene = Scene(self)
         self.world_util = WorldUtil(self)

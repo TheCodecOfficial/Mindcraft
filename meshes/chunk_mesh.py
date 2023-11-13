@@ -24,6 +24,6 @@ class ChunkMesh(Mesh):
             self.chunk.voxels,
             self.format_size,
             self.chunk.position,
-            self.chunk.world.voxels,  # TODO: This seems weird
+            None
         )
         return mesh
