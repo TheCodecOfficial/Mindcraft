@@ -1,9 +1,5 @@
-import heapq
 
-h = []
-heapq.heappush(h, (5, 'write code'))
-heapq.heappush(h, (7, 'release product'))
-heapq.heappush(h, (1, 'write spec'))
+l = {1: "hello", 2: "world", 3: "!"}
 
-# check if 'write spec' is in heap
-print(any(task == 'write spec' for _, task in h))
+asd = l[12]
+print(asd)

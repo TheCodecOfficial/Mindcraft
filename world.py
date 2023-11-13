@@ -3,14 +3,13 @@ from objects.chunk import Chunk
 from voxel_interaction import VoxelInteraction
 import random
 import heapq
-
+import sys
 
 class World:
     def __init__(self, app):
         self.app = app
         self.chunks = {}
-        # self.chunks = [None] * WORLD_VOL
-        # self.voxels = np.empty([WORLD_VOL, CHUNK_VOL], dtype=np.uint8)
+        self.utils = WorldUtils(self)
         self.build_chunks()
         self.build_chunk_meshes()
         self.voxel_interaction = VoxelInteraction(self)
@@ -79,8 +78,9 @@ class World:
         for i in range(2):
             if self.chunks_to_generate:
                 chunk_coords = heapq.heappop(self.chunks_to_generate)[1]
+                self.utils.rebuild_chunks_around(*chunk_coords)
                 self.generate_chunk(*chunk_coords)
-        #self.load_chunks_around_player()
+
         self.voxel_interaction.update()
 
     def render(self):
@@ -89,3 +89,36 @@ class World:
             distance = glm.distance(world_coords, self.player.camera.position)
             if distance / CHUNK_SIZE <= RENDER_DISTANCE:
                 chunk.render()
+
+class WorldUtils():
+    def __init__(self, world):
+        self.world = world
+        self.chunks = world.chunks
+
+    def chunk_exists(self, x, y, z):
+        return (x, y, z) in self.chunks.keys()
+
+    def get_chunk(self, x, y, z):
+        if self.chunk_exists(x, y, z):
+            return self.chunks[(x, y, z)]
+
+        return None
+
+    def get_chunk_voxels(self, x, y, z, return_empty=False):
+        if self.chunk_exists(x, y, z):
+            return self.chunks[(x, y, z)].voxels
+        elif return_empty:
+            return np.zeros(CHUNK_VOL, dtype=np.uint8)
+        
+        return None
+
+    def rebuild_chunk(self, x, y, z):
+        chunk = self.get_chunk(x, y, z)
+        if chunk:
+            chunk.build_mesh()
+    
+    def rebuild_chunks_around(self, x, y, z):
+        for dx in range(-1, 2):
+            for dy in range(-1, 2):
+                for dz in range(-1, 2):
+                    self.rebuild_chunk(x + dx, y + dy, z + dz)

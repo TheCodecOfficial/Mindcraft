@@ -61,6 +61,7 @@ class Chunk:
                 for y in range(CHUNK_SIZE):
                     wy = cy + y
                     y_norm = 2*(wy / (CHUNK_SIZE * WORLD_HEIGHT) - 0.5)
-                    density = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.02+3, octaves=2) - 2*y_norm
+                    density = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.02+3, octaves=2) - 0.2*y_norm
+                    b = r
                     b = 0 if density < 0 else b
                     voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = b
