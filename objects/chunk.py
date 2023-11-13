@@ -16,6 +16,8 @@ class Chunk:
         self.center = (glm.vec3(self.position) + 0.5) * CHUNK_SIZE
         self.is_inside_frustum = self.app.player.camera.frustum.is_inside_frustum
 
+        self.build_voxels()
+
     def get_model_matrix(self):
         m_model = glm.translate(glm.mat4(), glm.vec3(self.position) * CHUNK_SIZE)
         return m_model
@@ -39,6 +41,8 @@ class Chunk:
         
         if np.any(voxels):
             self.is_empty = False
+
+        self.voxels = voxels
         return voxels
     
     @staticmethod
@@ -53,20 +57,10 @@ class Chunk:
                 #world_height = 32 + x
                 #local_height = min(world_height - cy, CHUNK_SIZE)
 
-                aniso = fractal_noise2_norm(10+wx * 0.01+3, wz * 0.01+3, octaves=4)
-                b = 1 if aniso > 0.5 else 2
-                aniso -= 0.3
-                aniso *= 2
-                aniso = aniso**3
-                aniso = min(aniso, 1)
-                aniso = max(aniso, 0)
-
-                #b = int(fractal_noise2_norm(wx * 0.02, wz * 0.02) * 9) + 0
+                b = int(fractal_noise2_norm(wx * 0.02, wz * 0.02) * 9) + 0
                 for y in range(CHUNK_SIZE):
                     wy = cy + y
                     y_norm = 2*(wy / (CHUNK_SIZE * WORLD_HEIGHT) - 0.5)
                     density = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.02+3, octaves=2) - 2*y_norm
-                    density_aniso = noise_3D(wx * 0.02+3, wy * 0.02+3, wz * 0.1+3, octaves=2) - 3*y_norm
-                    density = aniso*density_aniso + (1-aniso)*density
                     b = 0 if density < 0 else b
                     voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = b

@@ -122,6 +122,7 @@ class VoxelInteraction:
         self.interaction_mode = not self.interaction_mode
 
     def update(self):
+        return
         self.raycast()
 
     def raycast(self):

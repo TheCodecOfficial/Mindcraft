@@ -16,6 +16,7 @@ class PlayerFly():
         self.camera.update()
 
     def handle_events(self, event):
+        return
         if not self.voxel_interaction:
             self.voxel_interaction = self.app.scene.world.voxel_interaction
         if event.type == pg.MOUSEBUTTONDOWN:
