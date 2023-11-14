@@ -24,6 +24,7 @@ class Chunk:
 
     def set_uniforms(self):
         self.app.shader_program.chunk_shader['m_model'].write(self.m_model)
+        self.app.shader_program.chunk_shader['fog_color'].write(BG_COLOR)
 
     def build_mesh(self):
         self.mesh = ChunkMesh(self)

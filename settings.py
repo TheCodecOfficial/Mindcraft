@@ -51,3 +51,4 @@ GRAVITY = 9.81*2
 
 # Colors
 BG_COLOR = glm.vec3(0.4, 0.76, 1)
+BG_COLOR = glm.vec3(0.6, 0.85, 1)

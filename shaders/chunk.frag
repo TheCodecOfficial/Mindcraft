@@ -3,6 +3,7 @@
 layout (location = 0) out vec4 fragColor;
 
 uniform sampler2DArray u_texture_array;
+uniform vec3 fog_color;
 
 in vec3 voxel_color;
 in vec2 uv;
@@ -23,7 +24,7 @@ void main(){
     vec3 color = texture(u_texture_array, vec3(face_uv, voxel_id)).rgb;
     color = color * shading;
     float dist = gl_FragCoord.z / gl_FragCoord.w;
-    //color = mix(vec3(1, 1, 1)*0.9, color, fog(dist, 64, 0.1));
+    color = mix(fog_color, color, fog(dist, 64, 0.1));
 
     fragColor = vec4(color, 1);
 }
