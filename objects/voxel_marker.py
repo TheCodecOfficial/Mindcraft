@@ -19,8 +19,8 @@ class VoxelMarker:
                 self.position = self.handler.voxel_world_pos"""
 
     def set_uniform(self):
-        self.mesh.shader['mode_id'] = self.handler.interaction_mode
-        self.mesh.shader['m_model'].write(self.get_model_matrix())
+        self.mesh.shader["mode_id"] = self.handler.interaction_mode
+        self.mesh.shader["m_model"].write(self.get_model_matrix())
 
     def get_model_matrix(self):
         m_model = glm.translate(glm.mat4(), glm.vec3(self.position))
@@ -30,19 +30,3 @@ class VoxelMarker:
         if self.handler.voxel_id:
             self.set_uniform()
             self.mesh.render()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

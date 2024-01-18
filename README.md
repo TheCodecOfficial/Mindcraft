@@ -1,4 +1,4 @@
-# Modular Infinite Network of Dynamic Cubic Realms And Fractal Terrain (MINDCRAFT)
+# Mindcraft
 
 #### Sources
 

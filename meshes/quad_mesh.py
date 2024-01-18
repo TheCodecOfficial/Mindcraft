@@ -11,8 +11,8 @@ class QuadMesh(Mesh):
         self.ctx = app.ctx
         self.shader = app.shader_program.quad
 
-        self.vbo_format = '3f 3f'
-        self.attrs = 'in_position', 'in_color'
+        self.vbo_format = "3f 3f"
+        self.attrs = "in_position", "in_color"
         self.vao = self.get_vao()
 
     def get_vertex_data(self) -> np.array:
@@ -25,5 +25,5 @@ class QuadMesh(Mesh):
             (0.5, -0.5, 0.0),
         ]
         colors = [(0, 1, 0), (1, 0, 0), (0, 0, 1), (0, 1, 0), (0, 0, 1), (1, 0, 1)]
-        vertex_data = np.hstack([vertices, colors], dtype='float32')
+        vertex_data = np.hstack([vertices, colors], dtype="float32")
         return vertex_data

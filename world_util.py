@@ -8,7 +8,7 @@ class WorldUtil:
         self.app = app
         self.chunks = app.scene.world.chunks
 
-    def get_chunk_index(self, x, y, z):
+    """def get_chunk_index(self, x, y, z):
         return int(get_chunk_index((x, y, z)))
 
     def get_chunk_coords(self, x, y, z):
@@ -52,4 +52,4 @@ class WorldUtil:
             height += 1
             y -= 1
 
-        return height
+        return height"""

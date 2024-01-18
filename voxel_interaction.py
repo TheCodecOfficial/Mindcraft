@@ -44,14 +44,14 @@ class VoxelInteraction:
 
     def rebuild_chunk(self, index):
         if index != -1:
-            #print(f"rebuilding adjacent chunk {index}")
+            # print(f"rebuilding adjacent chunk {index}")
             self.chunks[index].mesh.rebuild_mesh()
 
     def rebuild_adjacent_chunks(self):
         lx, ly, lz = self.voxel_local_pos
         wx, wy, wz = self.voxel_world_pos
 
-        #print("##############")
+        # print("##############")
 
         lxu = lx == 0
         lxo = lx == CHUNK_SIZE - 1
@@ -122,6 +122,7 @@ class VoxelInteraction:
         self.interaction_mode = not self.interaction_mode
 
     def update(self):
+        return
         self.raycast()
 
     def raycast(self):

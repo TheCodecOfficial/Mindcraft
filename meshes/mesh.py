@@ -22,9 +22,7 @@ class Mesh:
         if not np.any(vertex_data):
             return None
         vbo = self.ctx.buffer(vertex_data)
-        vao = self.ctx.vertex_array(
-            self.shader, [(vbo, self.vbo_format, *self.attrs)], skip_errors=True
-        )
+        vao = self.ctx.vertex_array(self.shader, [(vbo, self.vbo_format, *self.attrs)], skip_errors=True)
         return vao
 
     def render(self):

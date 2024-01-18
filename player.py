@@ -138,9 +138,7 @@ class Player:
             self.position.y - PLAYER_HEIGHT,
             self.position.z + PLAYER_HITBOX_RADIUS,
         )
-        self.grounded = (
-            bottom_voxel_0 or bottom_voxel_1 or bottom_voxel_2 or bottom_voxel_3
-        )
+        self.grounded = bottom_voxel_0 or bottom_voxel_1 or bottom_voxel_2 or bottom_voxel_3
 
     def move(self, direction):
         air_multiplier = 0.75 if not self.grounded else 1
