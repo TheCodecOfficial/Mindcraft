@@ -50,6 +50,20 @@ class Chunk:
     @staticmethod
     @njit
     def generate_terrain(voxels, cx, cy, cz):
+        air_level = 256  # Level at which only air is generated
+        for x in range(CHUNK_SIZE):
+            wx = cx + x
+            for z in range(CHUNK_SIZE):
+                wz = cz + z
+                for y in range(CHUNK_SIZE):
+                    wy = cy + y
+                    voxels[x + z * CHUNK_SIZE + y * CHUNK_AREA] = (
+                        0 if wy > air_level else 4
+                    )
+
+    @staticmethod
+    @njit
+    def generate_terrain_nice(voxels, cx, cy, cz):
         r = random.randint(1, 5)
         air_level = 256  # Level at which only air is generated
         for x in range(CHUNK_SIZE):
@@ -65,20 +79,29 @@ class Chunk:
                         wy = cy + y
                         y_norm = remap(wy, 0, air_level, -1, 1, clamp=True)
 
-                        density = noise_3D(wx * 0.004, wy * 0.004, wz * 0.004, octaves=5)
-                        large_noise = noise_3D(wx * 0.004, wy * 0.004, wz * 0.004, octaves=5)
-                        small_noise = noise_3D(wx * 0.01, wy * 0.01, wz * 0.01, octaves=4)
-                        flatness = noise_3D(wx * 0.002, wy * 0.002, wz * 0.002, octaves=2, seed=123)
-                        flatness = remap(flatness, 0.4, 0.6, 0, 1, clamp=True)
+                        large_noise = noise_3D(
+                            wx * 0.004, wy * 0.004, wz * 0.004, octaves=5
+                        )
+                        small_noise = noise_3D(
+                            wx * 0.01, wy * 0.01, wz * 0.01, octaves=5
+                        )
+                        flatness = noise_3D(
+                            wx * 0.002, wy * 0.002, wz * 0.002, octaves=4, seed=123
+                        )
+                        flatness = remap(flatness, 0.25, 0.75, 0, 1, clamp=True)
                         flatness = remap(flatness, 0, 1, 1, 20, clamp=True)
 
-                        granularity = noise_3D(wx * 0.0002, wy * 0.0002, wz * 0.0002, octaves=2, seed=345)
+                        granularity = noise_3D(
+                            wx * 0.0002, wy * 0.0002, wz * 0.0002, octaves=4, seed=345
+                        )
                         granularity = remap(granularity, 0.4, 0.6, 0, 1, clamp=True)
                         noise = lerp(large_noise, small_noise, granularity)
 
                         density = noise - y_norm * flatness
 
-                        humidity = noise_3D(wx * 0.002, 0, wz * 0.002, octaves=8, seed=456)
+                        humidity = noise_3D(
+                            wx * 0.002, 0, wz * 0.002, octaves=8, seed=456
+                        )
                         humidity = round(humidity)
                         b = humidity + 1
                         if flatness < 2:

@@ -51,6 +51,9 @@ class World:
             chunk.build_mesh()
 
     def load_chunks_around_player(self):
+        print(f"Total chunks: {len(self.chunks)}")
+        print(f"Total approx voxels: {len(self.chunks) * CHUNK_VOL}")
+
         # return
         playerpos = self.player.camera.position
         chunkpos = glm.ivec3(playerpos) // CHUNK_SIZE
@@ -71,7 +74,7 @@ class World:
         print("TESTING")
 
     def cleanup_chunks(self):
-        self.chunks_to_generate = self.chunks_to_generate[:100]
+        self.chunks_to_generate = self.chunks_to_generate[:1000]
 
     def update(self):
         l = len(self.chunks_to_generate)

@@ -14,7 +14,7 @@ class PlayerFly:
         self.functions_to_call = []
 
     def update(self):
-        print(self.camera.position)
+        #print(self.camera.position)
 
         self.mouse_control()
         self.keyboard_control()
