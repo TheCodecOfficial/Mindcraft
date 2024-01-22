@@ -8,13 +8,16 @@ class PlayerFly:
         self.app = app
         self.speed = 1
         self.voxel_interaction = None
-        self.camera = Camera(position, pitch, yaw)
+        # -0.20800000000000185, 0.5299999999999964
+        self.camera = Camera(position, -0.20800000000000185, 0.5299999999999964)
 
         self.chunk_pos = glm.ivec3(0)
         self.functions_to_call = []
 
     def update(self):
-        #print(self.camera.position)
+        print(
+            f"Pos: {self.camera.position}, Rot: {self.camera.pitch}, {self.camera.yaw}"
+        )
 
         self.mouse_control()
         self.keyboard_control()
