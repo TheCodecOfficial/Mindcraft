@@ -1,5 +1,12 @@
 # Modular Infinite Network of Dynamic Cubic Realms And Fractal Terrain (MINDCRAFT)
 
+## Installation
+
+1. `pip install pygame moderngl PyGLM numba opensimplex`
+2. Run `main.py`
+
+Tested on Windows 11 with Python 3.11.7. On WSL2, line 13 and 38 in `main.py` need to be commented out and the mouse input is buggy.
+
 ## Features
 ### Chunk Datastructure
 The world is split up into chunks of 32x32x32 voxels. Chunks are stored in a dictionary with their coordinates as keys. This allows for infinite worlds, as chunks are only generated when they are needed. All chunks in a given generation radius around the player are generated, starting at the closest to the player and moving outwards. Chunk culling is used to only render chunks that are visible to the player. 
@@ -57,8 +64,3 @@ To add even more variety, we can use yet another layer of noise, in this case ca
 Parts of the engine follow this [tutorial](https://www.youtube.com/watch?v=Ab8TOSFfNp4) on YouTube.
 
 - [Amanatides, John & Woo, Andrew. (1987). A Fast Voxel Traversal Algorithm for Ray Tracing](http://www.cse.yorku.ca/~amana/research/grid.pdf)
-
-#### Installation
-
-1. `pip install pygame moderngl PyGLM numba opensimplex`
-2. Run `main.py`
