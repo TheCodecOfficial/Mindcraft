@@ -8,15 +8,9 @@ Another benefit of seperating the world into chunks is that each chunk can be re
 
 ![](screenshots/chunks.png)
 
+![](screenshots/chunkloading.gif)
 
-
-https://github.com/TheCodecOfficial/Mindcraft/assets/29180917/e13952e5-af27-42bf-9883-306c99eba829
-
-
-
-https://github.com/TheCodecOfficial/Mindcraft/assets/29180917/c2bcaa97-baf1-4ef6-a1e0-05c5c409d7f2
-
- <video loop src="screenshots/chunk loading.mp4">  video </video> 
+![](screenshots/chunkloading_flying.gif)
 
 ### Shading
 Simply applying a texture to each face of a voxel looks very flat and it is impossible to make out any details in the terrain. To make it look more realistic, we apply a few simple and cheap shading techniques.
