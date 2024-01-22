@@ -59,6 +59,15 @@ To add even more variety, we can use yet another layer of noise, in this case ca
 
 ![](screenshots/biomes.png)
 
+## Future Work
+
+- Add more biomes
+- Add more textures
+- Add structures such as trees
+- Add water (+ transparency)
+- Reimplement block breaking and placing
+- Opimize world generation
+
 ## Acknowledgments
 
 Parts of the engine follow this [tutorial](https://www.youtube.com/watch?v=Ab8TOSFfNp4) on YouTube.
