@@ -41,7 +41,7 @@ The 3D terrain already looks quite nice, but it is very repetitive. To add more 
 High flatness
 ![](screenshots/flat.png)
 Small noise
-![](screenshots/smallnoise.png) Smaller noise
+![](screenshots/smallnoise.png)
 
 #### Biomes
 To add even more variety, we can use yet another layer of noise, in this case called humidity, to determine the biome of each voxel. With a few simple rules we can create diverse worlds. In this example, we use the humidity and flatness to determine the biome from the three possible biomes: desert, grassland and mountain. The biome determines which texture is applied to the voxel.
