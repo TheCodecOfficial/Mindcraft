@@ -24,8 +24,8 @@ void main(){
     vec3 color = texture(u_texture_array, vec3(face_uv, voxel_id)).rgb;
     color = color * shading;
     float dist = gl_FragCoord.z / gl_FragCoord.w;
-    color = mix(fog_color, color, fog(dist, 64, 0.05));
-    //color = mix(fog_color, color, fog(dist, 256, 0.005));
+    //color = mix(fog_color, color, fog(dist, 64, 0.05));
+    color = mix(fog_color, color, fog(dist, 256, 0.005));
 
 
     fragColor = vec4(color, 1);

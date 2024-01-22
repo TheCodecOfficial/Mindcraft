@@ -6,7 +6,7 @@ The world is split up into chunks of 32x32x32 voxels. Chunks are stored in a dic
 
 Another benefit of seperating the world into chunks is that each chunk can be rendered as a single mesh, which is much more efficient than rendering each voxel individually. When voxels are added, modified or removed, only the mesh of the chunk that contains the voxel is updated (and the meshes of the neighbouring chunks, if the voxel is on the edge of the chunk).
 
-TODO: add images/videos of chunking system 
+![](screenshots/chunks.png)
 
 ### Shading
 Simply applying a texture to each face of a voxel looks very flat and it is impossible to make out any details in the terrain. To make it look more realistic, we apply a few simple and cheap shading techniques.
@@ -27,7 +27,26 @@ Lastly, we can add some fog to the scene. This blends far away terrain with the 
 
 ### Terrain Generation
 
-TODO: Terrain generation explanation + images
+We can utilite fractal noise (multiple layers of perlin noise) to generate terrain. To enable the generation of more complex structures such as overhangs and arches, we use 3-dimensional noise. The noise or density is sampled at each voxel position and the result is compared to a threshold value, determining whether the voxel is solid or not. To make it look natural, we lower the density of the terrain as the height increases. This is done by subtracting a normalization value from the noise, depending on its height.
+
+#### 2D Terrain
+![](screenshots/2D%20terrain.png)
+
+#### 3D Terrain
+![](screenshots/overhang.png)
+
+#### Modulation
+The 3D terrain already looks quite nice, but it is very repetitive. To add more variety, we can use another layer of noise to modulate certain properties of the terrain. For example, we can use it to change the intensity of the height normalization, making some parts of the terrain flatter than others. We can also use it to interpolate between high frequency and low frequency noise, adding more detail to the terrain.
+
+High flatness
+![](screenshots/flat.png)
+Small noise
+![](screenshots/smallnoise.png) Smaller noise
+
+#### Biomes
+To add even more variety, we can use yet another layer of noise, in this case called humidity, to determine the biome of each voxel. With a few simple rules we can create diverse worlds. In this example, we use the humidity and flatness to determine the biome from the three possible biomes: desert, grassland and mountain. The biome determines which texture is applied to the voxel.
+
+![](screenshots/biomes.png)
 
 ## Acknowledgments
 
